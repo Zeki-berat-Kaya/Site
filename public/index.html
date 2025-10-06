@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kick_Off-Live | EN İYİ HD Futbol Yayınları ve İstatistikler</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Orbitron (Başlıklar) ve Poppins (Gövde Metni) -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Özel Tailwind Konfigürasyonu */
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bg-dark': '#0D1117',
+                        'card-dark': '#1B1F23',
+                        'neon-green': '#00FF88', /* Ana Vurgu */
+                        'neon-glow-high': 'rgba(0, 255, 136, 0.8)',
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        poppins: ['Poppins', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'neon-card': '0 0 15px rgba(0, 255, 136, 0.4)',
+                        'neon-btn': '0 0 20px rgba(0, 255, 136, 0.7)',
+                    }
+                }
+            }
+        }
+
+        /* --- Global Stil Ayarları --- */
+        body {
+            background-color: #0D1117;
+            color: #FFFFFF;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- Arka Plan: Stadyum Işıkları Simülasyonu --- */
+        .neon-flare-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 70% 30%, rgba(27, 31, 35, 0.8) 0%, rgba(13, 17, 23, 1) 50%);
+            animation: moveFlare 25s infinite alternate ease-in-out;
+        }
+
+        @keyframes moveFlare {
+            0% { background: radial-gradient(circle at 10% 20%, #1B1F23 0%, #0D1117 50%); }
+            50% { background: radial-gradient(circle at 90% 80%, #1B1F23 0%, #0D1117 50%); }
+            100% { background: radial-gradient(circle at 10% 20%, #1B1F23 0%, #0D1117 50%); }
+        }
+        
+        /* --- Neon Buton Stili --- */
+        .neon-button {
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            z-index: 10;
+            border: 2px solid #00FF88;
+            background-color: transparent;
+        }
+
+        .neon-button:hover {
+            color: #0D1117;
+            background-color: #00FF88;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.9);
+            transform: scale(1.05);
+        }
+
+        /* --- Maç Kartı (3D Tilt ve Neon Efekti) --- */
+        .match-card {
+            position: relative;
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            background-color: #1B1F23;
+            border: 1px solid rgba(0, 255, 136, 0.1);
+            transform-style: preserve-3d;
+        }
+
+        .match-card:hover {
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.8), 0 8px 30px rgba(0, 0, 0, 0.5);
+            transform: perspective(1000px) rotateX(2deg) rotateY(2deg) scale(1.03); /* Hafif 3D Eğilme */
+            border-color: #00FF88;
+        }
+
+        .watch-button {
+            transition: all 0.3s ease;
+            box-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+        }
+        .watch-button:hover {
+            box-shadow: 0 0 20px #00FFAA, 0 0 40px #00FFAA;
+            background-color: #00FFAA;
+            transform: translateY(-3px);
+        }
+        
+        /* --- Skor Ticker Stili --- */
+        .ticker-bar {
+            background: linear-gradient(90deg, rgba(13, 17, 23, 0.95) 0%, #1B1F23 50%, rgba(13, 17, 23, 0.95) 100%);
+            border-bottom: 1px solid #00FF88;
+            padding: 4px 0;
+        }
+        .ticker-content {
+            display: inline-block;
+            white-space: nowrap;
+            animation: ticker-scroll 30s linear infinite;
+            padding-left: 100%; /* İçeriğin tamamen sağdan başlamasını sağlar */
+        }
+        @keyframes ticker-scroll {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* --- Loading Spinner: Futbol Topu (Gemini Analizi için de kullanılır) --- */
+        .ball-loader {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, white 0%, #00FF88 15%, #0D1117 30%, #000 60%);
+            box-shadow: 0 0 10px #00FF88;
+            animation: spin-3d 1s linear infinite;
+        }
+
+        @keyframes spin-3d {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* --- Sayfa Geçiş Animasyonu (Fade-in/out) --- */
+        .page-transition {
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .page-active {
+            opacity: 1;
+        }
+
+        /* Tablo Stili */
+        .result-table th {
+            border-bottom: 2px solid #00FF88;
+        }
+        .result-table td {
+            border-bottom: 1px solid #1B1F23;
+        }
+
+        /* Oyuncu Kartı Efekti */
+        .player-card-detail {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+        .player-card-detail:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.5);
+        }
+
+        /* Modal Stili */
+        .modal {
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: #1B1F23;
+            border: 2px solid #00FF88;
+            box-shadow: 0 0 40px rgba(0, 255, 136, 0.8);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="font-poppins">
+
+    <!-- 1. Dramatik Arka Plan -->
+    <div class="neon-flare-bg"></div>
+
+    <!-- 2. Loading Ekranı -->
+    <div id="loading-screen" class="fixed inset-0 bg-bg-dark z-[100] flex flex-col items-center justify-center transition-opacity duration-700">
+        <div class="ball-loader mb-6"></div>
+        <div class="text-2xl font-orbitron text-neon-green tracking-widest animate-pulse">YAYIN YÜKLENİYOR...</div>
+    </div>
+
+    <!-- 3. Skor Ticker Bar -->
+    <div class="fixed top-0 left-0 w-full ticker-bar text-white text-sm z-50 shadow-2xl overflow-hidden">
+        <div class="ticker-content flex space-x-16 py-1">
+            <span class="text-red-500 font-extrabold flex items-center">🔴 CANLI: GALATASARAY 2 - 1 BEŞİKTAŞ (88')</span>
+            <span class="text-yellow-400 font-semibold flex items-center">🟡 PREMIER LEAGUE: LIVERPOOL 0 - 0 MAN. CITY (HT)</span>
+            <span class="text-neon-green font-extrabold flex items-center">🟢 BAŞLIYOR: REAL MADRID vs. VALENCIA (22:00)</span>
+            <span class="text-blue-400 font-semibold flex items-center">🔵 BİTTİ: INTER 1 - 2 MILAN</span>
+        </div>
+    </div>
+
+    <!-- 4. Navbar -->
+    <header class="sticky top-[30px] bg-bg-dark bg-opacity-90 backdrop-blur-sm shadow-2xl z-40 border-b border-neon-green/30">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" onclick="showSection('home')" class="text-3xl font-orbitron font-black text-neon-green tracking-widest drop-shadow-neon-sm">
+                KICK_OFF-LIVE
+            </a>
+
+            <!-- Desktop Menü -->
+            <div class="hidden md:flex space-x-7 text-sm font-bold tracking-wide">
+                <a href="#" onclick="showSection('home')" class="nav-link text-white hover:text-neon-green transition-all duration-300 transform hover:scale-105">Ana Sayfa</a>
+                <a href="#" onclick="showSection('live')" class="nav-link text-white hover:text-neon-green transition-all duration-300 transform hover:scale-105">Canlı Maçlar</a>
+                <a href="#" onclick="showSection('teams')" class="nav-link text-white hover:text-neon-green transition-all duration-300 transform hover:scale-105">Takımlar & Oyuncular</a>
+                <a href="#" onclick="showSection('fixture')" class="nav-link text-white hover:text-neon-green transition-all duration-300 transform hover:scale-105">Fikstür</a>
+                <a href="#" onclick="showSection('leagues')" class="nav-link text-white hover:text-neon-green transition-all duration-300 transform hover:scale-105">Ligler</a>
+                <a href="#" onclick="showSection('contact')" class="nav-link text-white hover:text-neon-green transition-all duration-300 transform hover:scale-105">İletişim</a>
+            </div>
+
+            <!-- Sağ Üst: Kullanıcı İkonu -->
+            <div class="flex items-center space-x-4">
+                <button class="p-2 rounded-full bg-card-dark hover:bg-neon-green/10 transition duration-300 border border-transparent hover:border-neon-green">
+                    <svg class="w-6 h-6 text-neon-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </button>
+                <!-- Hamburger Buton (Mobil) -->
+                <button id="hamburger-menu-btn" class="md:hidden p-2 rounded-md bg-card-dark border border-neon-green/50 hover:bg-neon-green/20 transition duration-300">
+                    <svg class="w-7 h-7 text-neon-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Mobil Menü İçeriği -->
+        <div id="mobile-menu" class="hidden md:hidden bg-card-dark border-t border-gray-700 pb-4 transition-all duration-300">
+            <a href="#" onclick="showSection('home'); closeMobileMenu();" class="block px-6 py-3 text-white hover:bg-bg-dark border-l-4 border-transparent hover:border-neon-green">Ana Sayfa</a>
+            <a href="#" onclick="showSection('live'); closeMobileMenu();" class="block px-6 py-3 text-white hover:bg-bg-dark border-l-4 border-transparent hover:border-neon-green">Canlı Maçlar</a>
+            <a href="#" onclick="showSection('teams'); closeMobileMenu();" class="block px-6 py-3 text-white hover:bg-bg-dark border-l-4 border-transparent hover:border-neon-green">Takımlar & Oyuncular</a>
+            <a href="#" onclick="showSection('fixture'); closeMobileMenu();" class="block px-6 py-3 text-white hover:bg-bg-dark border-l-4 border-transparent hover:border-neon-green">Fikstür</a>
+            <a href="#" onclick="showSection('leagues'); closeMobileMenu();" class="block px-6 py-3 text-white hover:bg-bg-dark border-l-4 border-transparent hover:border-neon-green">Ligler</a>
+            <a href="#" onclick="showSection('contact'); closeMobileMenu();" class="block px-6 py-3 text-white hover:bg-bg-dark border-l-4 border-transparent hover:border-neon-green">İletişim</a>
+        </div>
+    </header>
+
+    <!-- 5. Ana İçerik Alanı -->
+    <main class="pt-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- # ANA SAYFA (HOME) -->
+        <section id="home" class="content-section page-transition page-active h-[calc(100vh-100px)] flex flex-col justify-center items-center text-center p-8">
+            <h1 class="text-6xl md:text-8xl font-orbitron font-extrabold mb-6 text-white tracking-tight leading-none [text-shadow:_0_0_15px_rgba(0,255,136,0.5)]">
+                CANLI YAYIN <span class="text-neon-green">BAŞLASIN</span>
+            </h1>
+            <p class="text-lg md:text-2xl text-gray-300 mb-12 max-w-3xl font-light">
+                Kesintisiz, HD kalitede ve en güncel maç linkleriyle futbol heyecanını **Kick\_Off-Live** ile yaşayın.
+            </p>
+            <a href="#" onclick="showSection('live')" class="neon-button px-12 py-5 text-xl rounded-xl font-bold tracking-widest uppercase shadow-neon-btn">
+                MAÇLARA GÖZ AT
+            </a>
+        </section>
+
+        <!-- # CANLI MAÇLAR SAYFASI (LIVE) -->
+        <section id="live" class="content-section hidden page-transition py-12 min-h-screen">
+            <h2 class="text-5xl font-orbitron font-bold mb-10 text-center text-neon-green">Sıcak Yayınlar 🔥</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                
+                <!-- MAÇ KARTI 1 (CANLI - En Önemli Maç) -->
+                <div class="match-card p-7 rounded-xl shadow-2xl flex flex-col justify-between border-2 border-red-600/50">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="bg-red-700 text-white text-sm font-extrabold px-4 py-1 rounded-full shadow-red-500/50 animate-pulse">🔴 CANLI | 88'</span>
+                        <span class="text-sm text-gray-400 font-semibold">Süper Lig Derbisi</span>
+                    </div>
+                    <div class="flex justify-around items-center text-center my-6">
+                        <!-- Takım 1 -->
+                        <div class="flex flex-col items-center">
+                            <div class="text-5xl mb-2 [text-shadow:_0_0_8px_gold]">🦁</div>
+                            <span class="text-2xl font-bold font-orbitron">GS</span>
+                        </div>
+                        
+                        <!-- Skor -->
+                        <div class="mx-6">
+                            <span class="text-6xl font-orbitron font-black text-neon-green [text-shadow:_0_0_10px_#00FF88]">2 - 1</span>
+                        </div>
+
+                        <!-- Takım 2 -->
+                        <div class="flex flex-col items-center">
+                            <div class="text-5xl mb-2 [text-shadow:_0_0_8px_black]">🦅</div>
+                            <span class="text-2xl font-bold font-orbitron">BJK</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-center text-gray-400 mb-6">Yayın Kanalı: KO-ULTRA HD</p>
+                    <a href="#" class="watch-button text-center py-4 rounded-xl font-bold bg-neon-green text-bg-dark text-lg uppercase">
+                        HEMEN İZLE (HD)
+                    </a>
+                </div>
+
+                <!-- MAÇ KARTI 2 (CANLI - Devre Arası) -->
+                <div class="match-card p-7 rounded-xl shadow-2xl flex flex-col justify-between">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="bg-yellow-600 text-bg-dark text-sm font-extrabold px-4 py-1 rounded-full">🟡 DEVRE ARASI</span>
+                        <span class="text-sm text-gray-400 font-semibold">Premier League</span>
+                    </div>
+                    <div class="flex justify-around items-center text-center my-6 opacity-80">
+                        <div class="flex flex-col items-center">
+                            <div class="text-5xl mb-2">🔴</div>
+                            <span class="text-2xl font-bold font-orbitron">LIV</span>
+                        </div>
+                        <div class="mx-6">
+                            <span class="text-6xl font-orbitron font-black text-neon-green">0 - 0</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="text-5xl mb-2">🔵</div>
+                            <span class="text-2xl font-bold font-orbitron">MC</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-center text-gray-400 mb-6">Yayın Kanalı: KO-SPORT 2</p>
+                    <a href="#" class="watch-button text-center py-4 rounded-xl font-bold bg-neon-green text-bg-dark text-lg uppercase">
+                        HEMEN İZLE
+                    </a>
+                </div>
+
+                <!-- MAÇ KARTI 3 (YAKINDA) -->
+                <div class="match-card p-7 rounded-xl shadow-2xl flex flex-col justify-between opacity-70 hover:opacity-100">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="bg-gray-700 text-white text-sm font-extrabold px-4 py-1 rounded-full">2 SAAT SONRA</span>
+                        <span class="text-sm text-gray-400 font-semibold">La Liga</span>
+                    </div>
+                    <div class="flex justify-around items-center text-center my-6">
+                        <div class="flex flex-col items-center">
+                            <div class="text-5xl mb-2">👑</div>
+                            <span class="text-2xl font-bold font-orbitron">RMA</span>
+                        </div>
+                        <div class="mx-6">
+                            <span class="text-6xl font-orbitron font-black text-gray-600">VS</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="text-5xl mb-2">🦇</div>
+                            <span class="text-2xl font-bold font-orbitron">VAL</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-center text-gray-400 mb-6">Başlama Saati: 22:00</p>
+                    <button disabled class="text-center py-4 rounded-xl font-bold bg-card-dark text-gray-500 border border-gray-700 text-lg uppercase cursor-not-allowed">
+                        YAYIN HAZIRLANIYOR
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- # YENİ BÖLÜM: TAKIMLAR VE OYUNCULAR (TEAMS) -->
+        <section id="teams" class="content-section hidden page-transition py-12 min-h-screen">
+            <h2 class="text-5xl font-orbitron font-bold mb-10 text-center text-neon-green">Takımlar ve Oyuncu Kadroları</h2>
+            <p class="text-center text-gray-400 mb-8 max-w-4xl mx-auto">
+                Global kulüplerin güncel verilerine buradan ulaşabilirsiniz. Bir takımı seçerek detaylı kadrosunu görüntüleyin.
+            </p>
+
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Sol Menü: Takım Listesi -->
+                <div class="lg:w-1/4 w-full bg-card-dark p-6 rounded-xl shadow-2xl border border-neon-green/10 h-fit">
+                    <h3 class="text-2xl font-orbitron mb-5 border-b pb-3 border-gray-700">Takımlar</h3>
+                    <ul id="team-menu">
+                        <!-- Takım butonları buraya JS ile yüklenecek -->
+                    </ul>
+                </div>
+
+                <!-- Sağ Alan: Oyuncu Kadroları -->
+                <div class="lg:w-3/4 w-full bg-card-dark p-8 rounded-xl shadow-2xl border border-neon-green/10">
+                    <h3 id="player-squad-title" class="text-4xl font-orbitron text-neon-green mb-6 border-b pb-3 border-gray-700">Takım Seçiniz</h3>
+                    <div id="player-squad-container" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                        <p id="initial-message" class="text-xl text-gray-500 col-span-full">Detaylı kadroyu görmek için soldan bir takım seçin.</p>
+                        <!-- Oyuncu kartları buraya JS ile yüklenecek -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- # FİKSTÜR VE SONUÇLAR SAYFASI (FIXTURE/RESULTS) -->
+        <section id="fixture" class="content-section hidden page-transition py-12 min-h-screen">
+            <h2 class="text-5xl font-orbitron font-bold mb-10 text-center text-neon-green">Fikstür ve Canlı Skorlar</h2>
+
+            <div class="bg-card-dark p-8 rounded-xl shadow-2xl border border-neon-green/10">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full result-table">
+                        <thead class="bg-bg-dark sticky top-0">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-neon-green uppercase tracking-wider">Tarih</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-neon-green uppercase tracking-wider">Maç</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-neon-green uppercase tracking-wider">Skor / Durum</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-neon-green uppercase tracking-wider">Lig / Kanal</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-neon-green uppercase tracking-wider">YZ Analizi</th> <!-- YENİ BAŞLIK -->
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-800">
+                            <!-- CANLI MAÇ (Kırmızı Vurgu) -->
+                            <tr class="hover:bg-bg-dark transition duration-300 border-l-4 border-red-600/80">
+                                <td class="px-6 py-4 whitespace-nowrap text-red-500 font-bold">ŞİMDİ</td>
+                                <td class="px-6 py-4 whitespace-nowrap font-extrabold">
+                                    Galatasaray - Beşiktaş
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-neon-green font-black">2 - 1</span> <span class="bg-red-700 text-white text-xs font-bold px-2 py-1 ml-3 rounded animate-pulse">CANLI (88')</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">Süper Lig | KO-HD</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-600 text-xs">Maç başladı.</td>
+                            </tr>
+                            <!-- GELECEK MAÇ (Neon Vurgu) - YZ Analizi burada! -->
+                            <tr class="hover:bg-bg-dark transition duration-300 border-l-4 border-neon-green/50">
+                                <td class="px-6 py-4 whitespace-nowrap text-neon-green font-semibold">
+                                    21:00
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap font-bold">
+                                    Arsenal - Chelsea
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-500 font-bold">
+                                    VS <span class="text-xs ml-3">(Yakında)</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-yellow-400">Premier League</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <button onclick="openAnalysisModal('Arsenal', 'Chelsea')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-xs shadow-md shadow-blue-500/50 transition duration-300 flex items-center">
+                                        ✨ YZ Analizi
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- BİTMİŞ MAÇ (Gri Tonlama) -->
+                            <tr class="hover:bg-bg-dark transition duration-300 text-gray-500 border-l-4 border-gray-700">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    Dün 20:00
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    Fenerbahçe - Trabzonspor
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="font-bold">1 - 0</span> <span class="text-xs ml-3">(Bitti)</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">Süper Lig</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-600 text-xs">Analiz sonlandı.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <!-- # LİGLER SAYFASI (LEAGUES) -->
+        <section id="leagues" class="content-section hidden page-transition py-12 min-h-screen">
+            <h2 class="text-5xl font-orbitron font-bold mb-10 text-center text-neon-green">Lig Şampiyonları ve Fikstürler</h2>
+
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Sol Menü: Ligler -->
+                <div class="lg:w-1/4 w-full bg-card-dark p-6 rounded-xl shadow-2xl border border-neon-green/10 h-fit">
+                    <h3 class="text-2xl font-orbitron mb-5 border-b pb-3 border-gray-700">Tüm Ligler</h3>
+                    <ul id="league-menu">
+                        <li class="league-item mb-2">
+                            <button onclick="loadLeague('super-lig')" data-league="super-lig" class="w-full text-left p-3 rounded-lg hover:bg-bg-dark transition duration-200 text-neon-green font-semibold border-l-4 border-neon-green">
+                                Türkiye Süper Ligi
+                            </button>
+                        </li>
+                        <li class="league-item mb-2">
+                            <button onclick="loadLeague('premier-league')" data-league="premier-league" class="w-full text-left p-3 rounded-lg hover:bg-bg-dark transition duration-200 border-l-4 border-transparent">
+                                İngiltere Premier League
+                            </button>
+                        </li>
+                        <li class="league-item mb-2">
+                            <button onclick="loadLeague('la-liga')" data-league="la-liga" class="w-full text-left p-3 rounded-lg hover:bg-bg-dark transition duration-200 border-l-4 border-transparent">
+                                İspanya La Liga
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Sağ Alan: Lig İçeriği -->
+                <div class="lg:w-3/4 w-full bg-card-dark p-8 rounded-xl shadow-2xl border border-neon-green/10">
+                    <h3 id="league-title" class="text-4xl font-orbitron text-neon-green mb-5 border-b pb-3 border-gray-700">Türkiye Süper Ligi</h3>
+                    <div id="league-content">
+                        <!-- İçerik JS ile yüklenecek -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- # İLETİŞİM SAYFASI (CONTACT) -->
+        <section id="contact" class="content-section hidden page-transition py-12 min-h-screen">
+            <h2 class="text-5xl font-orbitron font-bold mb-10 text-center text-neon-green">Bize Ulaşın</h2>
+            <div class="bg-card-dark p-10 rounded-xl shadow-2xl max-w-xl mx-auto border border-neon-green/10">
+                <p class="text-lg text-gray-300 mb-6 text-center">Yüksek hızlı destek için formu kullanın.</p>
+                <form onsubmit="event.preventDefault(); alertMessage('Mesajınız Işık Hızında Gönderildi!', 'success');">
+                    <input type="email" placeholder="E-posta Adresiniz (Gerekli)" required class="w-full p-4 mb-5 rounded-lg bg-bg-dark border border-gray-700 focus:border-neon-green outline-none text-white transition-all duration-300 focus:ring-2 focus:ring-neon-green/50">
+                    <textarea placeholder="Konu ve Mesajınız..." rows="6" required class="w-full p-4 mb-6 rounded-lg bg-bg-dark border border-gray-700 focus:border-neon-green outline-none text-white transition-all duration-300 focus:ring-2 focus:ring-neon-green/50"></textarea>
+                    <button type="submit" class="neon-button w-full py-4 rounded-xl font-semibold uppercase text-lg">
+                        GÖNDER
+                    </button>
+                </form>
+            </div>
+        </section>
+        
+        <!-- Mesaj Kutusu (Toast Bildirimi) -->
+        <div id="custom-alert" class="fixed bottom-6 right-6 z-[100] p-4 rounded-lg shadow-2xl hidden transition-all duration-300 transform translate-x-full"></div>
+
+    </main>
+
+    <!-- 6. Yapay Zeka Analiz Modalı -->
+    <div id="analysis-modal" class="modal fixed inset-0 flex items-center justify-center hidden">
+        <div class="modal-content w-full max-w-4xl mx-4 p-8 rounded-2xl relative">
+            
+            <!-- Modal Başlığı ve Kapatma Butonu -->
+            <div class="flex justify-between items-center pb-4 mb-6 border-b border-neon-green/50">
+                <h3 id="modal-title" class="text-3xl font-orbitron text-neon-green"></h3>
+                <button onclick="closeAnalysisModal()" class="text-gray-400 hover:text-white transition duration-200">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <!-- Analiz Yükleniyor Alanı -->
+            <div id="analysis-loading" class="flex flex-col items-center justify-center p-12 text-center hidden">
+                <div class="ball-loader mb-6 w-12 h-12"></div>
+                <p class="text-xl font-orbitron text-neon-green animate-pulse">YZ Maç Analizi Yükleniyor...</p>
+                <p class="text-sm text-gray-500 mt-2">Güncel veriler Google Search ile analiz ediliyor.</p>
+            </div>
+
+            <!-- Analiz Sonucu Alanı -->
+            <div id="analysis-result" class="hidden">
+                <div id="analysis-text" class="text-lg text-gray-200 mb-6 leading-relaxed">
+                    <!-- Analiz Metni Buraya Gelecek -->
+                </div>
+                
+                <h4 class="text-2xl font-orbitron text-red-500 mb-3 border-t pt-4 border-gray-700">Tahminimiz</h4>
+                <div id="analysis-prediction" class="text-3xl font-extrabold text-neon-green mb-8">
+                    <!-- Tahmin Buraya Gelecek -->
+                </div>
+
+                <div id="analysis-sources">
+                    <!-- Kaynaklar Buraya Gelecek -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- 7. Footer -->
+    <footer class="bg-card-dark mt-16 py-8 border-t border-neon-green/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-gray-400 mb-4 font-orbitron">KICK_OFF-LIVE <span class="text-neon-green">© 2025</span> | Canlı Futbol Yayın Platformu</p>
+            <div class="flex justify-center space-x-6">
+                <!-- Sosyal Medya İkonları -->
+                <a href="#" class="text-gray-500 hover:text-neon-green transition duration-300 transform hover:scale-110">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><!-- Instagram --><path d="M7.5 5.6c0-1.25.96-2.26 2.14-2.26s2.14 1.01 2.14 2.26.96 2.26 2.14 2.26 2.14-1.01 2.14-2.26v10.8c0 1.25-.96 2.26-2.14 2.26s-2.14-1.01-2.14-2.26v-5.6h-2.14v5.6c0 1.25-.96 2.26-2.14 2.26s-2.14-1.01-2.14-2.26v-10.8zM9.64 5.6c0-.36-.28-.65-.63-.65s-.63.29-.63.65.28.65.63.65.63-.29.63-.65z"></path></svg>
+                </a>
+                <a href="#" class="text-gray-500 hover:text-neon-green transition duration-300 transform hover:scale-110">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><!-- Twitter --><path d="M18.244 2.25h3.308l-7.227 8.261 8.526 11.66h-6.6l-5.74-7.838-5.464 7.838h-3.31l7.632-10.999L3.14 2.25h6.155l4.796 6.574 4.54-6.574zM16.92 19.85c.277.01.547.03.816.05l-.014-.02h1.696L14.39 4.39H12.6l-3.834 5.37-6.075-5.37H2.22l7.734 11.02L2.094 19.85h.82c.264 0 .52-.01.776-.03l.235.03h6.666z"></path></svg>
+                </a>
+                <a href="#" class="text-gray-500 hover:text-neon-green transition duration-300 transform hover:scale-110">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><!-- YouTube --><path d="M19.615 3.153C19.434 2.923 18.006 2 12 2S4.566 2.923 4.385 3.153A8.49 8.49 0 002 12c0 1.18.214 2.28.615 3.257.18.23.908.643 2.103 1.13C5.525 16.96 8.35 18 12 18s6.475-1.04 9.282-2.103c1.195-.487 1.923-.902 2.103-1.13C21.786 14.28 22 13.18 22 12c0-3.32-.934-6.05-2.385-8.847zM9.47 14.4V9.6L16 12l-6.53 2.4z"></path></svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Kodu: Dinamik İçerik, Animasyon ve Gemini API Yönetimi -->
+    <script>
+        // Gemini API için zorunlu boş anahtar
+        const apiKey = ""; 
+        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent";
+
+        // Sahte API verisi (Genişletilmiş Takım ve Oyuncu Verisi)
+        const mockTeamData = [
+            {
+                id: 1,
+                name: 'Galatasaray SK',
+                league: 'Süper Lig',
+                emoji: '🦁',
+                city: 'İstanbul',
+                players: [
+                    { name: 'F. Muslera', position: 'Kaleci', number: 1, nationality: 'Uruguay', rating: 85 },
+                    { name: 'V. Nelsson', position: 'Stoper', number: 25, nationality: 'Danimarka', rating: 83 },
+                    { name: 'M. Icardi', position: 'Santrafor', number: 9, nationality: 'Arjantin', rating: 90 },
+                    { name: 'H. Ziyech', position: 'Kanat', number: 22, nationality: 'Fas', rating: 86 },
+                    { name: 'K. Demirbay', position: 'Orta Saha', number: 8, nationality: 'Almanya', rating: 82 },
+                    { name: 'Tete', position: 'Kanat', number: 20, nationality: 'Brezilya', rating: 84 },
+                ]
+            },
+            {
+                id: 2,
+                name: 'Fenerbahçe SK',
+                league: 'Süper Lig',
+                emoji: '💛💙',
+                city: 'İstanbul',
+                players: [
+                    { name: 'E. Dzeko', position: 'Santrafor', number: 9, nationality: 'Bosna Hersek', rating: 88 },
+                    { name: 'D. Livaković', position: 'Kaleci', number: 40, nationality: 'Hırvatistan', rating: 84 },
+                    { name: 'S. Szymanski', position: 'On Numara', number: 53, nationality: 'Polonya', rating: 85 },
+                    { name: 'F. Kadıoğlu', position: 'Bek', number: 7, nationality: 'Türkiye', rating: 83 },
+                ]
+            },
+            {
+                id: 3,
+                name: 'Real Madrid CF',
+                league: 'La Liga',
+                emoji: '👑',
+                city: 'Madrid',
+                players: [
+                    { name: 'J. Bellingham', position: 'Orta Saha', number: 5, nationality: 'İngiltere', rating: 91 },
+                    { name: 'V. Vinícius Jr.', position: 'Kanat', number: 7, nationality: 'Brezilya', rating: 90 },
+                    { name: 'L. Modrić', position: 'Orta Saha', number: 10, nationality: 'Hırvatistan', rating: 87 },
+                ]
+            },
+            {
+                id: 4,
+                name: 'Manchester City',
+                league: 'Premier League',
+                emoji: '🔵',
+                city: 'Manchester',
+                players: [
+                    { name: 'E. Haaland', position: 'Santrafor', number: 9, nationality: 'Norveç', rating: 94 },
+                    { name: 'K. De Bruyne', position: 'Orta Saha', number: 17, nationality: 'Belçika', rating: 93 },
+                    { name: 'P. Foden', position: 'Kanat', number: 47, nationality: 'İngiltere', rating: 89 },
+                ]
+            },
+            {
+                id: 5,
+                name: 'Paris Saint-Germain',
+                league: 'Ligue 1',
+                emoji: '🔴🔵',
+                city: 'Paris',
+                players: [
+                    { name: 'K. Mbappé', position: 'Santrafor', number: 7, nationality: 'Fransa', rating: 95 },
+                    { name: 'Marquinhos', position: 'Stoper', number: 5, nationality: 'Brezilya', rating: 88 },
+                    { name: 'G. Ramos', position: 'Santrafor', number: 9, nationality: 'Portekiz', rating: 84 },
+                ]
+            },
+        ];
+
+        // Takım menüsünü yükleyen ve sayfaya basan fonksiyon
+        function loadTeamMenu() {
+            const teamMenuContainer = document.getElementById('team-menu');
+            teamMenuContainer.innerHTML = ''; // Önceki içeriği temizle
+
+            mockTeamData.forEach(team => {
+                const teamButton = `
+                    <li class="team-item mb-2" data-team-id="${team.id}">
+                        <button onclick="loadSquad(${team.id}, '${team.name}')" class="w-full text-left p-3 rounded-lg hover:bg-bg-dark transition duration-200 border-l-4 border-transparent flex justify-between items-center text-white hover:text-neon-green">
+                            <span class="font-semibold">${team.emoji} ${team.name}</span>
+                            <span class="text-xs text-gray-500">${team.league}</span>
+                        </button>
+                    </li>
+                `;
+                teamMenuContainer.innerHTML += teamButton;
+            });
+        }
+        
+        // Bir takıma tıklandığında oyuncu kadrosunu yükleyen fonksiyon
+        function loadSquad(teamId, teamName) {
+            const squadContainer = document.getElementById('player-squad-container');
+            const titleEl = document.getElementById('player-squad-title');
+            const initialMessage = document.getElementById('initial-message');
+            
+            // Menü vurgusunu güncelle
+            document.querySelectorAll('.team-item button').forEach(btn => {
+                btn.classList.remove('text-neon-green', 'border-neon-green');
+            });
+            const selectedButton = document.querySelector(`.team-item[data-team-id="${teamId}"] button`);
+            if (selectedButton) {
+                selectedButton.classList.add('text-neon-green', 'border-neon-green');
+            }
+
+            // Takım verisini bul
+            const selectedTeam = mockTeamData.find(t => t.id === teamId);
+            
+            if (selectedTeam && selectedTeam.players && selectedTeam.players.length > 0) {
+                titleEl.textContent = `${selectedTeam.name} Kadrosu`;
+                
+                // Başlangıç mesajını gizle
+                if(initialMessage) initialMessage.classList.add('hidden');
+                
+                // Oyuncu kartlarını oluştur
+                squadContainer.innerHTML = selectedTeam.players.map(player => `
+                    <div class="player-card-detail bg-bg-dark p-4 rounded-xl border border-gray-700 hover:border-neon-green/50 hover:bg-bg-dark/80">
+                        <div class="flex justify-between items-start mb-3 border-b border-gray-800 pb-2">
+                            <span class="text-3xl font-orbitron font-extrabold text-neon-green">${player.number}</span>
+                            <span class="text-sm font-semibold px-3 py-1 rounded-full bg-red-600/30 text-red-400">${player.position}</span>
+                        </div>
+                        <h4 class="text-xl font-bold text-white mb-1">${player.name}</h4>
+                        <div class="flex justify-between items-center text-sm text-gray-400">
+                            <span>Millet: ${player.nationality}</span>
+                            <span class="font-bold text-lg text-yellow-400">Puan: ${player.rating}</span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                titleEl.textContent = `${teamName} Kadrosu`;
+                squadContainer.innerHTML = `<p class="text-xl text-gray-500 col-span-full">Bu takımın detaylı kadro verileri şu anda mock (sahte) veride mevcut değil. Daha fazla takım eklemeliyiz!</p>`;
+            }
+        }
+
+
+        // Sayfa bölümlerini yöneten fonksiyon (Fade animasyonlu)
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.content-section');
+            
+            // Tüm bölümleri gizle (Fade-out)
+            sections.forEach(section => {
+                section.classList.remove('page-active');
+            });
+
+            // Seçilen bölümü göster (Fade-in)
+            const activeSection = document.getElementById(sectionId);
+            if (activeSection) {
+                activeSection.classList.remove('hidden');
+                setTimeout(() => {
+                    activeSection.classList.add('page-active');
+                }, 10); // Kısa bir gecikme CSS transition tetiklenmesini sağlar
+            }
+            
+            // Gizlemesi biten diğer tüm bölümleri tamamen kaldır
+            setTimeout(() => {
+                sections.forEach(section => {
+                    if (section.id !== sectionId) {
+                         section.classList.add('hidden');
+                    }
+                });
+            }, 500); // CSS transition süresi kadar bekle
+
+            // Navigasyon linklerinin rengini güncelle
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('text-neon-green');
+                link.classList.add('text-white');
+            });
+            
+            // Tıklanan linki neon yap
+            document.querySelector(`[onclick="showSection('${sectionId}')"]`).classList.add('text-neon-green');
+            document.querySelector(`[onclick="showSection('${sectionId}')"]`).classList.remove('text-white');
+
+            // Eğer "teams" bölümüne geçiş yapıldıysa, menüyü yükle
+            if (sectionId === 'teams') {
+                loadTeamMenu();
+            }
+        }
+
+        // Mobil menü yönetimi
+        const hamburgerBtn = document.getElementById('hamburger-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        hamburgerBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        function closeMobileMenu() {
+             mobileMenu.classList.add('hidden');
+        }
+
+        // Ligler Sayfası İçeriği Yönetimi
+        function loadLeague(leagueId) {
+            const titleEl = document.getElementById('league-title');
+            const contentEl = document.getElementById('league-content');
+            const leagueItems = document.querySelectorAll('.league-item button');
+
+            // Tüm menü butonlarının stilini sıfırla
+            leagueItems.forEach(btn => {
+                btn.classList.remove('text-neon-green', 'font-semibold', 'border-neon-green');
+                btn.classList.add('border-transparent');
+            });
+
+            // Tıklanan butonu vurgula
+            const selectedBtn = document.querySelector(`[data-league="${leagueId}"]`);
+            if (selectedBtn) {
+                selectedBtn.classList.add('text-neon-green', 'font-semibold', 'border-neon-green');
+            }
+
+
+            let title = '';
+            let content = '';
+            
+            switch (leagueId) {
+                case 'super-lig':
+                    title = 'Türkiye Süper Ligi';
+                    content = `
+                        <p class="text-xl text-gray-300 mb-6">
+                            Süper Lig'de zirve yarışı tüm heyecanıyla devam ediyor. Güncel puan durumu ve derbi yayın bilgilerine ulaşın.
+                        </p>
+                        <div class="mt-6 p-5 bg-bg-dark rounded-xl border border-neon-green/30">
+                            <h4 class="text-2xl font-orbitron text-neon-green mb-4">PUAN DURUMU (TOP 3)</h4>
+                            <ul class="space-y-3">
+                                <li class="flex justify-between items-center text-lg"><span>🥇 Galatasaray</span> <span class="font-bold text-neon-green">28 Puan</span></li>
+                                <li class="flex justify-between items-center text-lg"><span>🥈 Fenerbahçe</span> <span class="font-bold text-neon-green">27 Puan</span></li>
+                                <li class="flex justify-between items-center text-lg"><span>🥉 Beşiktaş</span> <span class="font-bold text-neon-green">25 Puan</span></li>
+                            </ul>
+                        </div>
+                    `;
+                    break;
+                case 'premier-league':
+                    title = 'İngiltere Premier League';
+                    content = `
+                        <p class="text-xl text-gray-300 mb-6">
+                            Dünyanın en hızlı ve çekişmeli ligi. Tüm yayınlar KO-ULTRA HD kalitesinde sunulmaktadır.
+                        </p>
+                         <div class="mt-6 p-5 bg-bg-dark rounded-xl border border-neon-green/30">
+                            <h4 class="text-2xl font-orbitron text-neon-green mb-4">SIRADAKİ DEV MAÇ</h4>
+                            <p class="text-lg font-bold">Liverpool vs. Manchester United</p>
+                            <p class="text-sm text-gray-400">Tarih: 15 Aralık | Saat: 19:30 | Kanal: KO-SPORT 1</p>
+                        </div>
+                    `;
+                    break;
+                case 'la-liga':
+                    title = 'İspanya La Liga';
+                    content = `
+                        <p class="text-xl text-gray-300 mb-6">
+                            Real Madrid ve Barcelona'nın yıldızlarının sahne aldığı İspanya futbolu.
+                        </p>
+                        <div class="mt-6 p-5 bg-bg-dark rounded-xl border border-neon-green/30">
+                            <h4 class="text-2xl font-orbitron text-neon-green mb-4">EL CLASICO</h4>
+                            <p class="text-lg font-bold">Real Madrid 3 - 0 Barcelona (Sonuç)</p>
+                            <p class="text-sm text-gray-400">Tarih: 1 Kasım | Tüm goller sitemizde.</p>
+                        </div>
+                    `;
+                    break;
+                default:
+                    title = 'Lig Seçimi Yapın';
+                    content = '<p class="text-xl text-gray-400">Soldaki menüden bir lig seçerek detaylı fikstür ve puan durumunu görüntüleyebilirsiniz.</p>';
+            }
+
+            titleEl.textContent = title;
+            contentEl.innerHTML = content;
+        }
+
+
+        // Custom Toast Mesajı (Alert yerine)
+        function alertMessage(message, type = 'info') {
+            const alertBox = document.getElementById('custom-alert');
+            let bgColor = 'bg-blue-600';
+            let icon = ''; 
+
+            if (type === 'success') {
+                bgColor = 'bg-neon-green text-bg-dark';
+                icon = '<svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>';
+            } else if (type === 'info') {
+                bgColor = 'bg-blue-600';
+                icon = '<svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2H9.5V9H9z" clip-rule="evenodd"></path></svg>';
+            }
+            
+            alertBox.className = `fixed bottom-6 right-6 z-[100] p-4 rounded-lg shadow-2xl transition-all duration-500 flex items-center ${bgColor}`;
+            alertBox.innerHTML = `${icon}<span>${message}</span>`;
+            
+            // Gözükme animasyonu: sağdan içeri kaydır
+            alertBox.classList.remove('hidden', 'translate-x-full');
+            
+            setTimeout(() => {
+                // Gizlenme animasyonu: sağa kaydır
+                alertBox.classList.add('translate-x-full');
+                setTimeout(() => {
+                    alertBox.classList.add('hidden');
+                }, 500);
+            }, 3000);
+        }
+        
+        // --- Gemini API Fonksiyonları ---
+
+        // Analiz Modalını açar, yüklemeyi başlatır ve API'yi çağırır.
+        async function openAnalysisModal(team1, team2) {
+            const modal = document.getElementById('analysis-modal');
+            const titleEl = document.getElementById('modal-title');
+            const loadingEl = document.getElementById('analysis-loading');
+            const resultEl = document.getElementById('analysis-result');
+
+            titleEl.textContent = `${team1} vs. ${team2} | Yapay Zeka Analizi`;
+            
+            resultEl.classList.add('hidden');
+            loadingEl.classList.remove('hidden');
+            modal.classList.remove('hidden');
+
+            // API çağrısını başlat
+            await fetchMatchAnalysis(team1, team2);
+
+            loadingEl.classList.add('hidden');
+            resultEl.classList.remove('hidden');
+        }
+
+        // Analiz Modalını kapatır
+        function closeAnalysisModal() {
+            document.getElementById('analysis-modal').classList.add('hidden');
+        }
+
+
+        // Maç analizi için Gemini API'yi çağıran fonksiyon
+        async function fetchMatchAnalysis(team1, team2, maxRetries = 5) {
+            const query = `Analyze the upcoming football match between ${team1} and ${team2}. Focus on recent form, key player injuries/suspensions, and tactical considerations. Provide a concise, professional analysis in Turkish (2-3 paragraphs maximum) and give a final score prediction.`;
+            const systemPrompt = "Act as a highly experienced football analyst for a premium broadcast channel. Your analysis must be objective, based on real-time data found via Google Search, and focused on providing actionable insights for the user. Always state your final score prediction clearly.";
+            
+            const url = `${API_URL}?key=${apiKey}`;
+            let lastError = null;
+
+            // Yapay Zeka Analiz alanlarını temizle
+            document.getElementById('analysis-text').innerHTML = '';
+            document.getElementById('analysis-prediction').textContent = 'Analiz bekleniyor...';
+            document.getElementById('analysis-sources').innerHTML = '';
+
+
+            for (let attempt = 0; attempt < maxRetries; attempt++) {
+                try {
+                    const payload = {
+                        contents: [{ parts: [{ text: query }] }],
+                        tools: [{ "google_search": {} }], // Gerçek zamanlı veri için Google Search grounding
+                        systemInstruction: {
+                            parts: [{ text: systemPrompt }]
+                        },
+                    };
+
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API returned status ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const candidate = result.candidates?.[0];
+
+                    if (candidate && candidate.content?.parts?.[0]?.text) {
+                        const text = candidate.content.parts[0].text;
+                        let sources = [];
+                        const groundingMetadata = candidate.groundingMetadata;
+
+                        if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                            sources = groundingMetadata.groundingAttributions
+                                .map(attribution => ({
+                                    uri: attribution.web?.uri,
+                                    title: attribution.web?.title,
+                                }))
+                                .filter(source => source.uri && source.title);
+                        }
+
+                        // Analizi ayrıştırma ve gösterme
+                        displayAnalysis(text, sources);
+                        return; // Başarılı, döngüyü sonlandır
+                    } else {
+                        throw new Error("API response content is empty or malformed.");
+                    }
+                } catch (error) {
+                    lastError = error;
+                    // Hata durumunda üssel geri çekilme (exponential backoff)
+                    const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
+                    console.error(`Attempt ${attempt + 1} failed. Retrying in ${delay}ms...`, error);
+                    if (attempt < maxRetries - 1) {
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                    }
+                }
+            }
+            // Tüm denemeler başarısız olursa hata mesajı göster
+            document.getElementById('analysis-text').textContent = "Üzgünüz, yapay zeka analizi şu anda yüklenemedi. Lütfen daha sonra tekrar deneyin.";
+            console.error("All Gemini API attempts failed:", lastError);
+        }
+
+        // Analiz sonucunu modalda gösteren yardımcı fonksiyon
+        function displayAnalysis(text, sources) {
+            const textEl = document.getElementById('analysis-text');
+            const predEl = document.getElementById('analysis-prediction');
+            const sourcesEl = document.getElementById('analysis-sources');
+            
+            // Tahmin metnini bul ve ayır (Modelin tahmini kalın yapması beklenir)
+            const predictionRegex = /(Tahmin|Skor Tahmini|Final Skoru):?\s*(\S+)\s*$/im;
+            const match = text.match(predictionRegex);
+            
+            let prediction = 'Tahmin mevcut değil.';
+            let cleanText = text;
+
+            if (match) {
+                // Tahmini yakaladık
+                prediction = match[2];
+                // Tahmin kısmını ana metinden temizle
+                cleanText = text.replace(match[0], '').trim();
+                
+                // Eğer tahmin skor formatındaysa (örneğin 2-1) kalın yap
+                if (prediction.match(/^\d+-\d+$/)) {
+                    prediction = `<span class="text-red-500">${prediction}</span>`;
+                }
+            }
+            
+            // Tahmini ekrana yaz
+            predEl.innerHTML = prediction;
+
+            // Metin içeriğini ekrana yaz
+            // Metin içeriği markdown formatında gelebilir, basit p etiketleriyle bölüyoruz.
+            textEl.innerHTML = cleanText.split('\n').map(p => p.trim() ? `<p class="mb-4">${p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</p>` : '').join('');
+
+
+            // Kaynakları ekrana yaz
+            if (sources.length > 0) {
+                let sourceHtml = '<p class="text-sm text-gray-500 mt-6">Bu analiz Google Search ile elde edilen verilere dayanmaktadır:</p><ul class="list-disc list-inside text-xs text-gray-400">';
+                sources.forEach((source, index) => {
+                    sourceHtml += `<li class="ml-2 mt-1"><a href="${source.uri}" target="_blank" class="hover:text-neon-green truncate block">${source.title}</a></li>`;
+                });
+                sourceHtml += '</ul>';
+                sourcesEl.innerHTML = sourceHtml;
+            } else {
+                sourcesEl.innerHTML = '<p class="text-sm text-gray-500 mt-6">Bu analiz için özel bir kaynak bağlantısı bulunamadı.</p>';
+            }
+        }
+
+        // Başlangıç Fonksiyonu
+        window.onload = function() {
+            // 1. Loading ekranını gizle
+            const loadingScreen = document.getElementById('loading-screen');
+            setTimeout(() => {
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 700);
+            }, 1500); // 1.5 saniye sonra loading animasyonunu bitir
+
+            // 2. Ana sayfayı göster ve linki vurgula
+            showSection('home');
+        };
+        
+        // DOM yüklendikten sonra Ligler sayfasının varsayılan içeriğini yükle
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLeague('super-lig');
+        });
+    </script>
+</body>
+</html>
